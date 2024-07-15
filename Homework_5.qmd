@@ -2,6 +2,321 @@
 title: "Homework5_ST558_Jia Lu"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
-## 
+# Task 1: Conceptual Questions
+
+1.  What is the purpose of using cross-validation when fitting a random forest model?
+
+-   The purpose of using cross-validation when fitting a random forest model is to select optimal tuning parameter.
+
+2.  Describe the bagged tree algorithm.
+
+-   Bagged tree algorithm uses bagging (or bootstrap aggregation) method to repeatedly get boostrap samples from the data (non-parametric) or a fitted model (parametric) and then calculate bootstrap statistics to obtain standard errors or statistical quantities to construct confidence intervals.
+
+3.  What is meant by a general linear model?
+
+-   General linear model uses continuous response variables that meet normality assumptions and allows for both continuous and categorical predictors. The relationship between predictors and the response is linear.
+
+4.  When fitting a multiple linear regression model, what does adding an interaction term do? That is, what does it allow the model to do differently as compared to when it is not included in the model?
+
+-   Fitting a multiple linear regression model including an interaction term would accommodate non-additive relationships to represent more complexity among variables which can lead to more accurate predictions compared to not including in the model.
+
+5.  Why do we split our data into a training and test set?
+
+-   Splitting our data into a training and test set is great to avoid overfitting when evaluating the model on the same data it was trained on, and to provide a more robust estimation of model performance. Overall, it ensures the reliability and applicability of the model.
+
+# Task 2: Fitting Models
+
+## Quick EDA/Data Preparation
+
+1.  Quickly understand data: Check on missingness and summarize the data, especially with respect to the relationships of the variables to HeartDisease.
+
+```{r}
+library(tidyverse)
+library(caret)
+library(corrplot)
+
+#read in csv data
+data <- read_csv('heart.csv')
+
+#check total NA data entries 
+colSums(is.na(data))
+```
+
+From the result, there is no NA entries in this data set.
+
+```{r}
+#check which column has zero values in it and how many of them
+colSums(data == 0)
+```
+
+From the result, we can see there are one zero entry (missing measurement) from RestingBP, and 172 zero entries from Cholesterol. These variables are all numeric variables which might have relationships to HeartDisease. Although FastingBS and Oldpeak also have many zero entries, the value of zero is plausible for these two variables, not due to missing data.
+
+Drop patients with zero value entries for variable RestingBP and variable Cholesterol from this data set.
+
+```{r}
+data <- data |>
+  filter(!RestingBP == 0 & !Cholesterol == 0)
+data
+```
+
+2.  Create a new variable that is a factor version of the HeartDisease variable (if needed, this depends on how you read in your data). Remove the ST_Slope variable and the original HeartDisease variable (if applicable).
+
+```{r}
+data <- data |>
+  select(everything(), -ST_Slope)
+data
+
+data_2 <- data
+data_2$HeartDisease <- as.factor(data_2$HeartDisease)
+```
+
+3. Create dummy columns corresponding to the values of these three variables for use in our kNN fit. The caret vignette has a function to help us out here. You should use dummyVars() and predict() to create new columns. Then add these columns to our data frame.
+
+```{r}
+#check categorical variables left in the data set
+str(data_2)
+```
+
+From the output, we have some categorical predictors still in our data set: Sex, ChestPainType, RestingECG, and ExerciseAngina. 
+
+```{r}
+#specify all categorical variables left in data
+categorical_vars <- c("Sex", "ChestPainType", "RestingECG", "ExerciseAngina")
+#create new columns for dummy variables via dummyVars() and predict() 
+dummy_model <- dummyVars(~ ., data = data_2[, categorical_vars])
+data_dummies <- predict(dummy_model, newdata = data_2)
+#add these columns to our data frame
+data_knn <- cbind(data_dummies, data_2[, !names(data_2) %in% categorical_vars])
+
+str(data_knn)
+```
+
+## Split your Data
+
+Split this data into a training and test set. 
+
+```{r}
+set.seed(11)
+
+trainIndex <- createDataPartition(data_knn$HeartDisease, p = .7,
+                                  list = FALSE,
+                                  times = 1)
+
+train_data <-  data_knn[trainIndex, ]
+test_data <- data_knn[-trainIndex, ]
+
+#check the dimensions of our training data and testing data frame
+dim(train_data)
+dim(test_data)
+```
+
+## kNN
+
+Check summarized details of our data using summary() method. It will give us a basic idea about our dataset’s attributes range.
+
+```{r}
+summary(data_knn)
+```
+
+Before modeling, let’s scale and centralized data.
+
+```{r}
+pre_proc_values <- preProcess(train_data, method = c("center", "scale"))
+
+#Scaling and centralizing train and test data sets.
+train_transformed <- predict(pre_proc_values, train_data)
+test_transformed <- predict(pre_proc_values, test_data)
+```
+
+From above summary statistics, it shows us that all the attributes have a different range. So, we need to standardize our data. We can standardize data using caret’s preProcess() method. 
+
+Caret package provides train() method for training our data for various algorithms. Before train() method, we will first use trainControl() method. It controls the computational nuances of the train() method.
+
+For training knn classifier, train() method should be passed with “method” parameter as “knn”. The “trControl” parameter should be passed with results from our trianControl() method. The “tuneLength” parameter holds an integer value. This is for tuning our algorithm.
+
+```{r}
+trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 3)
+
+set.seed(11)
+knn_fit <- train(HeartDisease ~ ., data = train_transformed, method = "knn",
+                 trControl=trctrl,
+                 tuneGrid = expand.grid(k = 1:40),
+                 tuneLength = 10)
+knn_fit
+```
+
+The output shows Accuracy and Kappa metrics for different k value and it automatically selects best k-value (k=16). 
+
+Now, our model is trained with K value as 16 We are ready to predict HeartDisease for our test set. We can use predict() method.
+
+```{r}
+test_pred <- predict(knn_fit, newdata = test_transformed)
+test_pred
+```
+
+To check how well this chosen model does on the test set, we can use the confusionMatrix() function.
+
+```{r}
+confusion_matrix_knn <- confusionMatrix(test_pred, test_transformed$HeartDisease)
+confusion_matrix_knn
+```
+
+It shows that our model accuracy for test set is 76.23%.
+
+## Logistic Regression
+
+### Logistic regression Model 1
+
+More EDA is conducted on this data set. I create new dummy variables HeartDisease, and calculate and plot correlation between HeartDisease1 and other variables.
+
+```{r}
+#change variable HeartDisease to be a character variable for creating dummy variable purpose
+data_3 <- data
+data_3$HeartDisease <- as.character(data_3$HeartDisease)
+str(data_3)
+
+#create new dummy variables via dummyVars() and predict() 
+categorical_vars_2 <- c("Sex", "ChestPainType", "RestingECG", "ExerciseAngina", "HeartDisease")
+dummy_model_2 <- dummyVars(~ ., data = data_3[, categorical_vars_2])
+data_dummies_2 <- predict(dummy_model_2, newdata = data_3)
+#add these columns to our data frame
+data_3 <- cbind(data_dummies_2, data_3[, !names(data_3) %in% categorical_vars_2])
+str(data_3)
+
+m <- cor(select(data_3, -c("HeartDisease0", "SexF", "RestingECGNormal", "ExerciseAnginaN")))
+
+corrplot(m, method = 'color',
+         order = 'alphabet',
+         diag = FALSE,
+         col = COL2('RdBu'))
+```
+
+From the graph above it, we can see that there are some positive linear correlation between HeartDisease1 and ExerciseAnginaY, ChestPainTypeASY, Oldpeak, Age, or SexM, and some negative linear correlation between HeartDisease1 and MaxHR, ChestPainTypeATA, or ChestPainTypeNAP. There are also some weak relationships between HeartDisease1 and RestingBP or FastingBS. It seems that Cholesterol, RestingECGLVH, and RestingECGST don't have strong correlations with HeartDisease1. Additionally, there is also some negative correlation between Age and MaxHR, and positive correlation between ExerciseAnginaY and ChestPainTypeASY.
+
+To create logistic regression models, we don't need to create the dummy variables. Thus, we can use the previous data set "data_2" in the training process.
+
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.
+
+```{r}
+str(data_2)
+
+set.seed(11)
+
+#split this data into a training and test set
+trainIndex_2 <- createDataPartition(data_2$HeartDisease, p = .7,
+                                  list = FALSE,
+                                  times = 1)
+
+train_data_2 <-  data_2[trainIndex_2, ]
+test_data_2 <- data_2[-trainIndex_2, ]
+#check the dimensions of our training data and testing data frame
+dim(train_data_2)
+dim(test_data_2)
+
+#preprocessing data
+pre_proc_values_2 <- preProcess(train_data_2, method = c("center", "scale"))
+
+#Scaling and centralizing train and test data sets.
+train_transformed_2 <- predict(pre_proc_values_2, train_data_2)
+test_transformed_2 <- predict(pre_proc_values_2, test_data_2)
+
+logistic_M1_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex, 
+                         data = train_transformed_2, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl)
+logistic_M1_fit
+```
+
+### Logistic regression Model 2
+
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex, and the interaction term between Age and MaxHR as predictors.
+
+```{r}
+set.seed(11)
+logistic_M2_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR, 
+                         data = train_transformed_2, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl,
+                         preProcess = c("center", "scale"))
+logistic_M2_fit
+```
+
+
+### Logistic regression Model 3
+
+```{r}
+set.seed(11)
+logistic_M3_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR + ExerciseAngina:ChestPainType, 
+                         data = train_transformed_2, 
+                         method = "glm",
+                         family="binomial",
+                         trControl=trctrl,
+                         preProcess = c("center", "scale"))
+logistic_M3_fit
+```
+
+### Models Comparison
+
+Provide basic summary and obtained train accuracy for each model:
+
+```{r}
+#logistic M1 model:
+summary(logistic_M1_fit)
+
+log_reg_model_1_train_acc <- logistic_M1_fit$results$Accuracy
+log_reg_model_1_train_acc
+
+fitted_M1 <- predict(logistic_M1_fit,
+                  newdata = test_transformed_2, type='raw')
+
+confusion_matrix_M1 <- confusionMatrix(fitted_M1, test_transformed_2$HeartDisease)
+confusion_matrix_M1
+
+#logistic M2 model:
+summary(logistic_M2_fit)
+
+log_reg_model_2_train_acc <- logistic_M2_fit$results$Accuracy
+log_reg_model_2_train_acc
+
+fitted_M2 <- predict(logistic_M2_fit,
+                  newdata = test_transformed_2, type='raw')
+
+confusion_matrix_M2 <- confusionMatrix(fitted_M2, test_transformed_2$HeartDisease)
+confusion_matrix_M2
+
+#logistic M3 model:
+summary(logistic_M3_fit)
+
+log_reg_model_3_train_acc <- logistic_M3_fit$results$Accuracy
+log_reg_model_3_train_acc
+
+fitted_M3 <- predict(logistic_M3_fit,
+                  newdata = test_transformed_2, type='raw')
+
+confusion_matrix_M3 <- confusionMatrix(fitted_M3, test_transformed_2$HeartDisease)
+confusion_matrix_M3
+
+#list of accuracy obtained from each logistic model
+list(logistic_M1 = confusion_matrix_M1$overall[1], logistic_M2 = confusion_matrix_M2$overall[1], logistic_M3 = confusion_matrix_M3$overall[1])
+```
+
+From the result after using confusionMatrix(), we can see the the logistic regression Model 1 and Model 2 both have the highest accuracy (78.48%). Considering the complexity of the two models, Model 1 could be chosen as the best model among these three models.
+
+## Tree Models
+
+##
+```{r}
+
+```
+
+## Wrap up
+
+```{r}
+
+```
