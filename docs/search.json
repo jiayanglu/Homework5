@@ -46,6 +46,6 @@
     "href": "Homework_5.html#wrap-up",
     "title": "Homework5_ST558_Jia Lu",
     "section": "Wrap up",
-    "text": "Wrap up"
+    "text": "Wrap up\nShow accuracy for all the regression models and tree models in a list:\n\nlist(logistic_M1 = confusion_matrix_M1$overall[1], logistic_M2 = confusion_matrix_M2$overall[1], logistic_M3 = confusion_matrix_M3$overall[1], tree_classification = confusion_matrix_classification$overall[1], tree_rf = confusion_matrix_rf$overall[1], tree_boosted = confusion_matrix_boosted$overall[1])\n\n$logistic_M1\n Accuracy \n0.7847534 \n\n$logistic_M2\n Accuracy \n0.7847534 \n\n$logistic_M3\n Accuracy \n0.7713004 \n\n$tree_classification\n Accuracy \n0.7623318 \n\n$tree_rf\n Accuracy \n0.7982063 \n\n$tree_boosted\n Accuracy \n0.8071749 \n\n\nFrom the result, we can see that the boosted tree model has the highest accuracy (80.72%) among all the models. Therefore, the boosted tree model overall did the best job (in terms of accuracy) on the test set."
   }
 ]

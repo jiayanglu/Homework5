@@ -1346,6 +1346,36 @@ $tree_boosted
 </section>
 <section id="wrap-up" class="level2">
 <h2 class="anchored" data-anchor-id="wrap-up">Wrap up</h2>
+<p>Show accuracy for all the regression models and tree models in a list:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">logistic_M1 =</span> confusion_matrix_M1<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M2 =</span> confusion_matrix_M2<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M3 =</span> confusion_matrix_M3<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_classification =</span> confusion_matrix_classification<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_rf =</span> confusion_matrix_rf<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_boosted =</span> confusion_matrix_boosted<span class="sc">$</span>overall[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$logistic_M1
+ Accuracy 
+0.7847534 
+
+$logistic_M2
+ Accuracy 
+0.7847534 
+
+$logistic_M3
+ Accuracy 
+0.7713004 
+
+$tree_classification
+ Accuracy 
+0.7623318 
+
+$tree_rf
+ Accuracy 
+0.7982063 
+
+$tree_boosted
+ Accuracy 
+0.8071749 </code></pre>
+</div>
+</div>
+<p>From the result, we can see that the boosted tree model has the highest accuracy (80.72%) among all the models. Therefore, the boosted tree model overall did the best job (in terms of accuracy) on the test set.</p>
 
 
 </section>

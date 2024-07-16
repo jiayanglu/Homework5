@@ -396,8 +396,10 @@ list(tree_classification = confusion_matrix_classification$overall[1], tree_rf =
 
 ## Wrap up
 
+Show accuracy for all the regression models and tree models in a list:
+
 ```{r}
 list(logistic_M1 = confusion_matrix_M1$overall[1], logistic_M2 = confusion_matrix_M2$overall[1], logistic_M3 = confusion_matrix_M3$overall[1], tree_classification = confusion_matrix_classification$overall[1], tree_rf = confusion_matrix_rf$overall[1], tree_boosted = confusion_matrix_boosted$overall[1])
-
-
 ```
+
+From the result, we can see that the boosted tree model has the highest accuracy (80.72%) among all the models. Therefore, the boosted tree model overall did the best job (in terms of accuracy) on the test set.
