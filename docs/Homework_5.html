@@ -213,8 +213,35 @@ The following object is masked from 'package:purrr':
 <div class="cell-output cell-output-stderr">
 <pre><code>corrplot 0.92 loaded</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#read in csv data</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'heart.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'rpart' was built under R version 4.3.3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>randomForest 4.7-1.1
+Type rfNews() to see new features/changes/bug fixes.
+
+Attaching package: 'randomForest'
+
+The following object is masked from 'package:dplyr':
+
+    combine
+
+The following object is masked from 'package:ggplot2':
+
+    margin</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gbm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'gbm' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loaded gbm 2.2.2
+This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#read in csv data</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'heart.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 918 Columns: 12
 ── Column specification ────────────────────────────────────────────────────────
@@ -225,8 +252,8 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check total NA data entries </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check total NA data entries </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           Age            Sex  ChestPainType      RestingBP    Cholesterol 
              0              0              0              0              0 
@@ -238,8 +265,8 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 </div>
 <p>From the result, there is no NA entries in this data set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check which column has zero values in it and how many of them</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(data <span class="sc">==</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check which column has zero values in it and how many of them</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(data <span class="sc">==</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           Age            Sex  ChestPainType      RestingBP    Cholesterol 
              0              0              0              1            172 
@@ -252,9 +279,9 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 <p>From the result, we can see there are one zero entry (missing measurement) from RestingBP, and 172 zero entries from Cholesterol. These variables are all numeric variables which might have relationships to HeartDisease. Although FastingBS and Oldpeak also have many zero entries, the value of zero is plausible for these two variables, not due to missing data.</p>
 <p>Drop patients with zero value entries for variable RestingBP and variable Cholesterol from this data set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>RestingBP <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="sc">!</span>Cholesterol <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>RestingBP <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> <span class="sc">!</span>Cholesterol <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 746 × 12
      Age Sex   ChestPainType RestingBP Cholesterol FastingBS RestingECG MaxHR
@@ -274,85 +301,147 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 #   HeartDisease &lt;dbl&gt;</code></pre>
 </div>
 </div>
+<p>More EDA is conducted on this data set. I create new dummy variables for HeartDisease, and calculate and plot correlation between HeartDisease_character1 and other variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#change variable HeartDisease to be a character variable for creating dummy variable purpose</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>HeartDisease_character <span class="ot">&lt;-</span> <span class="fu">as.character</span>(data<span class="sc">$</span>HeartDisease)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [746 × 13] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Age                   : num [1:746] 40 49 37 48 54 39 45 54 37 48 ...
+ $ Sex                   : chr [1:746] "M" "F" "M" "F" ...
+ $ ChestPainType         : chr [1:746] "ATA" "NAP" "ATA" "ASY" ...
+ $ RestingBP             : num [1:746] 140 160 130 138 150 120 130 110 140 120 ...
+ $ Cholesterol           : num [1:746] 289 180 283 214 195 339 237 208 207 284 ...
+ $ FastingBS             : num [1:746] 0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECG            : chr [1:746] "Normal" "Normal" "ST" "Normal" ...
+ $ MaxHR                 : num [1:746] 172 156 98 108 122 170 170 142 130 120 ...
+ $ ExerciseAngina        : chr [1:746] "N" "N" "N" "Y" ...
+ $ Oldpeak               : num [1:746] 0 1 0 1.5 0 0 0 0 1.5 0 ...
+ $ ST_Slope              : chr [1:746] "Up" "Flat" "Up" "Flat" ...
+ $ HeartDisease          : num [1:746] 0 1 0 1 0 0 0 0 1 0 ...
+ $ HeartDisease_character: chr [1:746] "0" "1" "0" "1" ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   Age = col_double(),
+  ..   Sex = col_character(),
+  ..   ChestPainType = col_character(),
+  ..   RestingBP = col_double(),
+  ..   Cholesterol = col_double(),
+  ..   FastingBS = col_double(),
+  ..   RestingECG = col_character(),
+  ..   MaxHR = col_double(),
+  ..   ExerciseAngina = col_character(),
+  ..   Oldpeak = col_double(),
+  ..   ST_Slope = col_character(),
+  ..   HeartDisease = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create new dummy variables via dummyVars() and predict() </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>categorical_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"ChestPainType"</span>, <span class="st">"RestingECG"</span>, <span class="st">"ExerciseAngina"</span>, <span class="st">"HeartDisease_character"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>dummy_model <span class="ot">&lt;-</span> <span class="fu">dummyVars</span>(<span class="sc">~</span> ., <span class="at">data =</span> data[, categorical_vars])</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>data_dummies <span class="ot">&lt;-</span> <span class="fu">predict</span>(dummy_model, <span class="at">newdata =</span> data)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#add these columns to our data frame</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>data_2 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_dummies, data[, <span class="sc">!</span><span class="fu">names</span>(data) <span class="sc">%in%</span> categorical_vars])</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   746 obs. of  21 variables:
+ $ SexF                   : num  0 1 0 1 0 0 1 0 0 1 ...
+ $ SexM                   : num  1 0 1 0 1 1 0 1 1 0 ...
+ $ ChestPainTypeASY       : num  0 0 0 1 0 0 0 0 1 0 ...
+ $ ChestPainTypeATA       : num  1 0 1 0 0 0 1 1 0 1 ...
+ $ ChestPainTypeNAP       : num  0 1 0 0 1 1 0 0 0 0 ...
+ $ ChestPainTypeTA        : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECGLVH          : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECGNormal       : num  1 1 0 1 1 1 1 1 1 1 ...
+ $ RestingECGST           : num  0 0 1 0 0 0 0 0 0 0 ...
+ $ ExerciseAnginaN        : num  1 1 1 0 1 1 1 1 0 1 ...
+ $ ExerciseAnginaY        : num  0 0 0 1 0 0 0 0 1 0 ...
+ $ HeartDisease_character0: num  1 0 1 0 1 1 1 1 0 1 ...
+ $ HeartDisease_character1: num  0 1 0 1 0 0 0 0 1 0 ...
+ $ Age                    : num  40 49 37 48 54 39 45 54 37 48 ...
+ $ RestingBP              : num  140 160 130 138 150 120 130 110 140 120 ...
+ $ Cholesterol            : num  289 180 283 214 195 339 237 208 207 284 ...
+ $ FastingBS              : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ MaxHR                  : num  172 156 98 108 122 170 170 142 130 120 ...
+ $ Oldpeak                : num  0 1 0 1.5 0 0 0 0 1.5 0 ...
+ $ ST_Slope               : chr  "Up" "Flat" "Up" "Flat" ...
+ $ HeartDisease           : num  0 1 0 1 0 0 0 0 1 0 ...</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">cor</span>(<span class="fu">select</span>(data_2, <span class="sc">-</span><span class="fu">c</span>(<span class="st">"HeartDisease_character0"</span>, <span class="st">"SexF"</span>, <span class="st">"RestingECGNormal"</span>, <span class="st">"ExerciseAnginaN"</span>, <span class="st">"HeartDisease"</span>, <span class="st">"ST_Slope"</span>)))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(m, <span class="at">method =</span> <span class="st">'color'</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">'alphabet'</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">diag =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">COL2</span>(<span class="st">'RdBu'</span>),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">tl.cex =</span> <span class="fl">0.7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Homework_5_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the graph above it, we can see that there are some positive linear correlation between HeartDisease_character1 and ExerciseAnginaY, ChestPainTypeASY, Oldpeak, Age, or SexM, and some negative linear correlation between HeartDisease1 and MaxHR, ChestPainTypeATA, or ChestPainTypeNAP. There are also some weak relationships between HeartDisease_character1 and RestingBP or FastingBS. It seems that Cholesterol, RestingECGLVH, and RestingECGST don’t have strong correlations with HeartDisease_character1. Additionally, there is also some negative correlation between Age and MaxHR, and some positive correlation between ExerciseAnginaY and ChestPainTypeASY.</p>
 <ol start="2" type="1">
-<li>Create a new variable that is a factor version of the HeartDisease variable (if needed, this depends on how you read in your data). Remove the ST_Slope variable and the original HeartDisease variable (if applicable).</li>
+<li>Create a new variable that is a factor version of the HeartDisease variable. Remove the ST_Slope variable, the original HeartDisease variable, and the HeartDisease_character variable.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">everything</span>(), <span class="sc">-</span>ST_Slope)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">HeartDisease_factor =</span> <span class="fu">as.factor</span>(HeartDisease)) <span class="sc">|&gt;</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">everything</span>(), <span class="sc">-</span>ST_Slope, <span class="sc">-</span>HeartDisease_character, <span class="sc">-</span>HeartDisease)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 746 × 11
-     Age Sex   ChestPainType RestingBP Cholesterol FastingBS RestingECG MaxHR
-   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;             &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;
- 1    40 M     ATA                 140         289         0 Normal       172
- 2    49 F     NAP                 160         180         0 Normal       156
- 3    37 M     ATA                 130         283         0 ST            98
- 4    48 F     ASY                 138         214         0 Normal       108
- 5    54 M     NAP                 150         195         0 Normal       122
- 6    39 M     NAP                 120         339         0 Normal       170
- 7    45 F     ATA                 130         237         0 Normal       170
- 8    54 M     ATA                 110         208         0 Normal       142
- 9    37 M     ASY                 140         207         0 Normal       130
-10    48 F     ATA                 120         284         0 Normal       120
-# ℹ 736 more rows
-# ℹ 3 more variables: ExerciseAngina &lt;chr&gt;, Oldpeak &lt;dbl&gt;, HeartDisease &lt;dbl&gt;</code></pre>
+<pre><code>tibble [746 × 11] (S3: tbl_df/tbl/data.frame)
+ $ Age                : num [1:746] 40 49 37 48 54 39 45 54 37 48 ...
+ $ Sex                : chr [1:746] "M" "F" "M" "F" ...
+ $ ChestPainType      : chr [1:746] "ATA" "NAP" "ATA" "ASY" ...
+ $ RestingBP          : num [1:746] 140 160 130 138 150 120 130 110 140 120 ...
+ $ Cholesterol        : num [1:746] 289 180 283 214 195 339 237 208 207 284 ...
+ $ FastingBS          : num [1:746] 0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECG         : chr [1:746] "Normal" "Normal" "ST" "Normal" ...
+ $ MaxHR              : num [1:746] 172 156 98 108 122 170 170 142 130 120 ...
+ $ ExerciseAngina     : chr [1:746] "N" "N" "N" "Y" ...
+ $ Oldpeak            : num [1:746] 0 1 0 1.5 0 0 0 0 1.5 0 ...
+ $ HeartDisease_factor: Factor w/ 2 levels "0","1": 1 2 1 2 1 1 1 1 2 1 ...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>data_2 <span class="ot">&lt;-</span> data</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>data_2<span class="sc">$</span>HeartDisease <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(data_2<span class="sc">$</span>HeartDisease)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol start="3" type="1">
 <li>Create dummy columns corresponding to the values of these three variables for use in our kNN fit. The caret vignette has a function to help us out here. You should use dummyVars() and predict() to create new columns. Then add these columns to our data frame.</li>
 </ol>
+<p>From the output after using str(), we have some categorical predictors still in our data set: Sex, ChestPainType, RestingECG, and ExerciseAngina.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#check categorical variables left in the data set</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>tibble [746 × 11] (S3: tbl_df/tbl/data.frame)
- $ Age           : num [1:746] 40 49 37 48 54 39 45 54 37 48 ...
- $ Sex           : chr [1:746] "M" "F" "M" "F" ...
- $ ChestPainType : chr [1:746] "ATA" "NAP" "ATA" "ASY" ...
- $ RestingBP     : num [1:746] 140 160 130 138 150 120 130 110 140 120 ...
- $ Cholesterol   : num [1:746] 289 180 283 214 195 339 237 208 207 284 ...
- $ FastingBS     : num [1:746] 0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECG    : chr [1:746] "Normal" "Normal" "ST" "Normal" ...
- $ MaxHR         : num [1:746] 172 156 98 108 122 170 170 142 130 120 ...
- $ ExerciseAngina: chr [1:746] "N" "N" "N" "Y" ...
- $ Oldpeak       : num [1:746] 0 1 0 1.5 0 0 0 0 1.5 0 ...
- $ HeartDisease  : Factor w/ 2 levels "0","1": 1 2 1 2 1 1 1 1 2 1 ...</code></pre>
-</div>
-</div>
-<p>From the output, we have some categorical predictors still in our data set: Sex, ChestPainType, RestingECG, and ExerciseAngina.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#specify all categorical variables left in data</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>categorical_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"ChestPainType"</span>, <span class="st">"RestingECG"</span>, <span class="st">"ExerciseAngina"</span>)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create new columns for dummy variables via dummyVars() and predict() </span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>dummy_model <span class="ot">&lt;-</span> <span class="fu">dummyVars</span>(<span class="sc">~</span> ., <span class="at">data =</span> data_2[, categorical_vars])</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>data_dummies <span class="ot">&lt;-</span> <span class="fu">predict</span>(dummy_model, <span class="at">newdata =</span> data_2)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">#add these columns to our data frame</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>data_knn <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_dummies, data_2[, <span class="sc">!</span><span class="fu">names</span>(data_2) <span class="sc">%in%</span> categorical_vars])</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_knn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co">#specify all categorical variables left in data</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>categorical_vars_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"ChestPainType"</span>, <span class="st">"RestingECG"</span>, <span class="st">"ExerciseAngina"</span>)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create new columns for dummy variables via dummyVars() and predict() </span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>dummy_model_2 <span class="ot">&lt;-</span> <span class="fu">dummyVars</span>(<span class="sc">~</span> ., <span class="at">data =</span> data[, categorical_vars_2])</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>data_dummies_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(dummy_model_2, <span class="at">newdata =</span> data)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#add these columns to our data frame</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>data_knn <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_dummies_2, data[, <span class="sc">!</span><span class="fu">names</span>(data) <span class="sc">%in%</span> categorical_vars_2])</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_knn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>'data.frame':   746 obs. of  18 variables:
- $ SexF            : num  0 1 0 1 0 0 1 0 0 1 ...
- $ SexM            : num  1 0 1 0 1 1 0 1 1 0 ...
- $ ChestPainTypeASY: num  0 0 0 1 0 0 0 0 1 0 ...
- $ ChestPainTypeATA: num  1 0 1 0 0 0 1 1 0 1 ...
- $ ChestPainTypeNAP: num  0 1 0 0 1 1 0 0 0 0 ...
- $ ChestPainTypeTA : num  0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECGLVH   : num  0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECGNormal: num  1 1 0 1 1 1 1 1 1 1 ...
- $ RestingECGST    : num  0 0 1 0 0 0 0 0 0 0 ...
- $ ExerciseAnginaN : num  1 1 1 0 1 1 1 1 0 1 ...
- $ ExerciseAnginaY : num  0 0 0 1 0 0 0 0 1 0 ...
- $ Age             : num  40 49 37 48 54 39 45 54 37 48 ...
- $ RestingBP       : num  140 160 130 138 150 120 130 110 140 120 ...
- $ Cholesterol     : num  289 180 283 214 195 339 237 208 207 284 ...
- $ FastingBS       : num  0 0 0 0 0 0 0 0 0 0 ...
- $ MaxHR           : num  172 156 98 108 122 170 170 142 130 120 ...
- $ Oldpeak         : num  0 1 0 1.5 0 0 0 0 1.5 0 ...
- $ HeartDisease    : Factor w/ 2 levels "0","1": 1 2 1 2 1 1 1 1 2 1 ...</code></pre>
+ $ SexF               : num  0 1 0 1 0 0 1 0 0 1 ...
+ $ SexM               : num  1 0 1 0 1 1 0 1 1 0 ...
+ $ ChestPainTypeASY   : num  0 0 0 1 0 0 0 0 1 0 ...
+ $ ChestPainTypeATA   : num  1 0 1 0 0 0 1 1 0 1 ...
+ $ ChestPainTypeNAP   : num  0 1 0 0 1 1 0 0 0 0 ...
+ $ ChestPainTypeTA    : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECGLVH      : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECGNormal   : num  1 1 0 1 1 1 1 1 1 1 ...
+ $ RestingECGST       : num  0 0 1 0 0 0 0 0 0 0 ...
+ $ ExerciseAnginaN    : num  1 1 1 0 1 1 1 1 0 1 ...
+ $ ExerciseAnginaY    : num  0 0 0 1 0 0 0 0 1 0 ...
+ $ Age                : num  40 49 37 48 54 39 45 54 37 48 ...
+ $ RestingBP          : num  140 160 130 138 150 120 130 110 140 120 ...
+ $ Cholesterol        : num  289 180 283 214 195 339 237 208 207 284 ...
+ $ FastingBS          : num  0 0 0 0 0 0 0 0 0 0 ...
+ $ MaxHR              : num  172 156 98 108 122 170 170 142 130 120 ...
+ $ Oldpeak            : num  0 1 0 1.5 0 0 0 0 1.5 0 ...
+ $ HeartDisease_factor: Factor w/ 2 levels "0","1": 1 2 1 2 1 1 1 1 2 1 ...</code></pre>
 </div>
 </div>
 </section>
@@ -360,21 +449,21 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 <h2 class="anchored" data-anchor-id="split-your-data">Split your Data</h2>
 <p>Split this data into a training and test set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_knn<span class="sc">$</span>HeartDisease, <span class="at">p =</span> .<span class="dv">7</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">list =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">times =</span> <span class="dv">1</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span>  data_knn[trainIndex, ]</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> data_knn[<span class="sc">-</span>trainIndex, ]</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">#check the dimensions of our training data and testing data frame</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>trainIndex <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_knn<span class="sc">$</span>HeartDisease_factor, <span class="at">p =</span> .<span class="dv">7</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">list =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span>  data_knn[trainIndex, ]</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> data_knn[<span class="sc">-</span>trainIndex, ]</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">#check the dimensions of our training data and testing data frame</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 523  18</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 223  18</code></pre>
 </div>
@@ -384,7 +473,7 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 <h2 class="anchored" data-anchor-id="knn">kNN</h2>
 <p>Check summarized details of our data using summary() method. It will give us a basic idea about our dataset’s attributes range.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_knn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_knn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>      SexF            SexM       ChestPainTypeASY ChestPainTypeATA
  Min.   :0.000   Min.   :0.000   Min.   :0.000    Min.   :0.0000  
@@ -414,35 +503,37 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
  Mean   :133   Mean   :244.6   Mean   :0.1676   Mean   :140.2  
  3rd Qu.:140   3rd Qu.:275.0   3rd Qu.:0.0000   3rd Qu.:160.0  
  Max.   :200   Max.   :603.0   Max.   :1.0000   Max.   :202.0  
-    Oldpeak        HeartDisease
- Min.   :-0.1000   0:390       
- 1st Qu.: 0.0000   1:356       
- Median : 0.5000               
- Mean   : 0.9016               
- 3rd Qu.: 1.5000               
- Max.   : 6.2000               </code></pre>
+    Oldpeak        HeartDisease_factor
+ Min.   :-0.1000   0:390              
+ 1st Qu.: 0.0000   1:356              
+ Median : 0.5000                      
+ Mean   : 0.9016                      
+ 3rd Qu.: 1.5000                      
+ Max.   : 6.2000                      </code></pre>
 </div>
 </div>
 <p>Before modeling, let’s scale and centralized data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>pre_proc_values <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(train_data, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling and centralizing train and test data sets.</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>train_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, train_data)</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>test_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>pre_proc_values <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(train_data, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling and centralizing train and test data sets.</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>train_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, train_data)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>test_transformed <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values, test_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>From above summary statistics, it shows us that all the attributes have a different range. So, we need to standardize our data. We can standardize data using caret’s preProcess() method.</p>
 <p>Caret package provides train() method for training our data for various algorithms. Before train() method, we will first use trainControl() method. It controls the computational nuances of the train() method.</p>
 <p>For training knn classifier, train() method should be passed with “method” parameter as “knn”. The “trControl” parameter should be passed with results from our trianControl() method. The “tuneLength” parameter holds an integer value. This is for tuning our algorithm.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>trctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"repeatedcv"</span>, <span class="at">number =</span> <span class="dv">10</span>, <span class="at">repeats =</span> <span class="dv">3</span>)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>knn_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease <span class="sc">~</span> ., <span class="at">data =</span> train_transformed, <span class="at">method =</span> <span class="st">"knn"</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trControl=</span>trctrl,</span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">k =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>),</span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">tuneLength =</span> <span class="dv">10</span>)</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>knn_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>trctrl <span class="ot">&lt;-</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"repeatedcv"</span>, <span class="at">number =</span> <span class="dv">10</span>, <span class="at">repeats =</span> <span class="dv">3</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>knn_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ., </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> train_transformed, </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                 <span class="at">method =</span> <span class="st">"knn"</span>,</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">trControl=</span>trctrl,</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">k =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">40</span>),</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">tuneLength =</span> <span class="dv">10</span>)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>knn_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>k-Nearest Neighbors 
 
@@ -504,8 +595,8 @@ The final value used for the model was k = 16.</code></pre>
 <p>The output shows Accuracy and Kappa metrics for different k value and it automatically selects best k-value (k=16).</p>
 <p>Now, our model is trained with K value as 16 We are ready to predict HeartDisease for our test set. We can use predict() method.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>test_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(knn_fit, <span class="at">newdata =</span> test_transformed)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>test_pred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>test_pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(knn_fit, <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed, <span class="sc">-</span>HeartDisease_factor))</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>test_pred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  [1] 0 0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 1 1 0 0 1 0 1 0 1 0 1 1 1 0 0
  [38] 0 1 1 1 1 1 0 1 0 1 1 1 0 0 1 1 0 1 0 0 0 1 1 1 0 0 1 1 0 1 0 0 1 0 1 0 0
@@ -519,8 +610,8 @@ Levels: 0 1</code></pre>
 </div>
 <p>To check how well this chosen model does on the test set, we can use the confusionMatrix() function.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>confusion_matrix_knn <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(test_pred, test_transformed<span class="sc">$</span>HeartDisease)</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>confusion_matrix_knn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>confusion_matrix_knn <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(test_pred, test_transformed<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>confusion_matrix_knn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -557,119 +648,55 @@ Prediction  0  1
 <h2 class="anchored" data-anchor-id="logistic-regression">Logistic Regression</h2>
 <section id="logistic-regression-model-1" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-model-1">Logistic regression Model 1</h3>
-<p>More EDA is conducted on this data set. I create new dummy variables HeartDisease, and calculate and plot correlation between HeartDisease1 and other variables.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#change variable HeartDisease to be a character variable for creating dummy variable purpose</span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>data_3 <span class="ot">&lt;-</span> data</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>data_3<span class="sc">$</span>HeartDisease <span class="ot">&lt;-</span> <span class="fu">as.character</span>(data_3<span class="sc">$</span>HeartDisease)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>tibble [746 × 11] (S3: tbl_df/tbl/data.frame)
- $ Age           : num [1:746] 40 49 37 48 54 39 45 54 37 48 ...
- $ Sex           : chr [1:746] "M" "F" "M" "F" ...
- $ ChestPainType : chr [1:746] "ATA" "NAP" "ATA" "ASY" ...
- $ RestingBP     : num [1:746] 140 160 130 138 150 120 130 110 140 120 ...
- $ Cholesterol   : num [1:746] 289 180 283 214 195 339 237 208 207 284 ...
- $ FastingBS     : num [1:746] 0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECG    : chr [1:746] "Normal" "Normal" "ST" "Normal" ...
- $ MaxHR         : num [1:746] 172 156 98 108 122 170 170 142 130 120 ...
- $ ExerciseAngina: chr [1:746] "N" "N" "N" "Y" ...
- $ Oldpeak       : num [1:746] 0 1 0 1.5 0 0 0 0 1.5 0 ...
- $ HeartDisease  : chr [1:746] "0" "1" "0" "1" ...</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create new dummy variables via dummyVars() and predict() </span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>categorical_vars_2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"ChestPainType"</span>, <span class="st">"RestingECG"</span>, <span class="st">"ExerciseAngina"</span>, <span class="st">"HeartDisease"</span>)</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>dummy_model_2 <span class="ot">&lt;-</span> <span class="fu">dummyVars</span>(<span class="sc">~</span> ., <span class="at">data =</span> data_3[, categorical_vars_2])</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>data_dummies_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(dummy_model_2, <span class="at">newdata =</span> data_3)</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co">#add these columns to our data frame</span></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>data_3 <span class="ot">&lt;-</span> <span class="fu">cbind</span>(data_dummies_2, data_3[, <span class="sc">!</span><span class="fu">names</span>(data_3) <span class="sc">%in%</span> categorical_vars_2])</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>'data.frame':   746 obs. of  19 variables:
- $ SexF            : num  0 1 0 1 0 0 1 0 0 1 ...
- $ SexM            : num  1 0 1 0 1 1 0 1 1 0 ...
- $ ChestPainTypeASY: num  0 0 0 1 0 0 0 0 1 0 ...
- $ ChestPainTypeATA: num  1 0 1 0 0 0 1 1 0 1 ...
- $ ChestPainTypeNAP: num  0 1 0 0 1 1 0 0 0 0 ...
- $ ChestPainTypeTA : num  0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECGLVH   : num  0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECGNormal: num  1 1 0 1 1 1 1 1 1 1 ...
- $ RestingECGST    : num  0 0 1 0 0 0 0 0 0 0 ...
- $ ExerciseAnginaN : num  1 1 1 0 1 1 1 1 0 1 ...
- $ ExerciseAnginaY : num  0 0 0 1 0 0 0 0 1 0 ...
- $ HeartDisease0   : num  1 0 1 0 1 1 1 1 0 1 ...
- $ HeartDisease1   : num  0 1 0 1 0 0 0 0 1 0 ...
- $ Age             : num  40 49 37 48 54 39 45 54 37 48 ...
- $ RestingBP       : num  140 160 130 138 150 120 130 110 140 120 ...
- $ Cholesterol     : num  289 180 283 214 195 339 237 208 207 284 ...
- $ FastingBS       : num  0 0 0 0 0 0 0 0 0 0 ...
- $ MaxHR           : num  172 156 98 108 122 170 170 142 130 120 ...
- $ Oldpeak         : num  0 1 0 1.5 0 0 0 0 1.5 0 ...</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">cor</span>(<span class="fu">select</span>(data_3, <span class="sc">-</span><span class="fu">c</span>(<span class="st">"HeartDisease0"</span>, <span class="st">"SexF"</span>, <span class="st">"RestingECGNormal"</span>, <span class="st">"ExerciseAnginaN"</span>)))</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot</span>(m, <span class="at">method =</span> <span class="st">'color'</span>,</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">order =</span> <span class="st">'alphabet'</span>,</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">diag =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="fu">COL2</span>(<span class="st">'RdBu'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Homework_5_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>From the graph above it, we can see that there are some positive linear correlation between HeartDisease1 and ExerciseAnginaY, ChestPainTypeASY, Oldpeak, Age, or SexM, and some negative linear correlation between HeartDisease1 and MaxHR, ChestPainTypeATA, or ChestPainTypeNAP. There are also some weak relationships between HeartDisease1 and RestingBP or FastingBS. It seems that Cholesterol, RestingECGLVH, and RestingECGST don’t have strong correlations with HeartDisease1. Additionally, there is also some negative correlation between Age and MaxHR, and positive correlation between ExerciseAnginaY and ChestPainTypeASY.</p>
-<p>To create logistic regression models, we don’t need to create the dummy variables. Thus, we can use the previous data set “data_2” in the training process.</p>
+<p>To create logistic regression models, we don’t need to create the dummy variables. Thus, we can use the previous data set “data” in the training process.</p>
 <p>Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>tibble [746 × 11] (S3: tbl_df/tbl/data.frame)
- $ Age           : num [1:746] 40 49 37 48 54 39 45 54 37 48 ...
- $ Sex           : chr [1:746] "M" "F" "M" "F" ...
- $ ChestPainType : chr [1:746] "ATA" "NAP" "ATA" "ASY" ...
- $ RestingBP     : num [1:746] 140 160 130 138 150 120 130 110 140 120 ...
- $ Cholesterol   : num [1:746] 289 180 283 214 195 339 237 208 207 284 ...
- $ FastingBS     : num [1:746] 0 0 0 0 0 0 0 0 0 0 ...
- $ RestingECG    : chr [1:746] "Normal" "Normal" "ST" "Normal" ...
- $ MaxHR         : num [1:746] 172 156 98 108 122 170 170 142 130 120 ...
- $ ExerciseAngina: chr [1:746] "N" "N" "N" "Y" ...
- $ Oldpeak       : num [1:746] 0 1 0 1.5 0 0 0 0 1.5 0 ...
- $ HeartDisease  : Factor w/ 2 levels "0","1": 1 2 1 2 1 1 1 1 2 1 ...</code></pre>
+ $ Age                : num [1:746] 40 49 37 48 54 39 45 54 37 48 ...
+ $ Sex                : chr [1:746] "M" "F" "M" "F" ...
+ $ ChestPainType      : chr [1:746] "ATA" "NAP" "ATA" "ASY" ...
+ $ RestingBP          : num [1:746] 140 160 130 138 150 120 130 110 140 120 ...
+ $ Cholesterol        : num [1:746] 289 180 283 214 195 339 237 208 207 284 ...
+ $ FastingBS          : num [1:746] 0 0 0 0 0 0 0 0 0 0 ...
+ $ RestingECG         : chr [1:746] "Normal" "Normal" "ST" "Normal" ...
+ $ MaxHR              : num [1:746] 172 156 98 108 122 170 170 142 130 120 ...
+ $ ExerciseAngina     : chr [1:746] "N" "N" "N" "Y" ...
+ $ Oldpeak            : num [1:746] 0 1 0 1.5 0 0 0 0 1.5 0 ...
+ $ HeartDisease_factor: Factor w/ 2 levels "0","1": 1 2 1 2 1 1 1 1 2 1 ...</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">#split this data into a training and test set</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>trainIndex_2 <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data_2<span class="sc">$</span>HeartDisease, <span class="at">p =</span> .<span class="dv">7</span>,</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">list =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">times =</span> <span class="dv">1</span>)</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>train_data_2 <span class="ot">&lt;-</span>  data_2[trainIndex_2, ]</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>test_data_2 <span class="ot">&lt;-</span> data_2[<span class="sc">-</span>trainIndex_2, ]</span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="co">#check the dimensions of our training data and testing data frame</span></span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train_data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#split this data into a training and test set</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>trainIndex_2 <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(data<span class="sc">$</span>HeartDisease_factor, <span class="at">p =</span> .<span class="dv">7</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">list =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">times =</span> <span class="dv">1</span>)</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>train_data_2 <span class="ot">&lt;-</span>  data[trainIndex_2, ]</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>test_data_2 <span class="ot">&lt;-</span> data[<span class="sc">-</span>trainIndex_2, ]</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="co">#check the dimensions of our training data and testing data frame</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(train_data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 523  11</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test_data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(test_data_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 223  11</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#preprocessing data</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>pre_proc_values_2 <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(train_data_2, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling and centralizing train and test data sets.</span></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>train_transformed_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values_2, train_data_2)</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>test_transformed_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values_2, test_data_2)</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex, </span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed_2, </span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co">#preprocessing data</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>pre_proc_values_2 <span class="ot">&lt;-</span> <span class="fu">preProcess</span>(train_data_2, <span class="at">method =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Scaling and centralizing train and test data sets.</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>train_transformed_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values_2, train_data_2)</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>test_transformed_2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(pre_proc_values_2, test_data_2)</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex, </span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed_2, </span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl)</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>logistic_M1_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized Linear Model 
 
@@ -691,14 +718,14 @@ Resampling results:
 <h3 class="anchored" data-anchor-id="logistic-regression-model-2">Logistic regression Model 2</h3>
 <p>Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex, and the interaction term between Age and MaxHR as predictors.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex <span class="sc">+</span> Age<span class="sc">:</span>MaxHR, </span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed_2, </span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl,</span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex <span class="sc">+</span> Age<span class="sc">:</span>MaxHR, </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed_2, </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl,</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>logistic_M2_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized Linear Model 
 
@@ -719,14 +746,14 @@ Resampling results:
 <section id="logistic-regression-model-3" class="level3">
 <h3 class="anchored" data-anchor-id="logistic-regression-model-3">Logistic regression Model 3</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex <span class="sc">+</span> Age<span class="sc">:</span>MaxHR <span class="sc">+</span> ExerciseAngina<span class="sc">:</span>ChestPainType, </span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed_2, </span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl,</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex <span class="sc">+</span> Age<span class="sc">:</span>MaxHR <span class="sc">+</span> ExerciseAngina<span class="sc">:</span>ChestPainType, </span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_transformed_2, </span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">method =</span> <span class="st">"glm"</span>,</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>                         <span class="at">family=</span><span class="st">"binomial"</span>,</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">trControl=</span>trctrl,</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>                         <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>))</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>logistic_M3_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Generalized Linear Model 
 
@@ -745,11 +772,11 @@ Resampling results:
 </div>
 </section>
 <section id="models-comparison" class="level3">
-<h3 class="anchored" data-anchor-id="models-comparison">Models Comparison</h3>
-<p>Provide basic summary and obtained train accuracy for each model:</p>
+<h3 class="anchored" data-anchor-id="models-comparison">Models comparison</h3>
+<p>Obtain basic summary and train accuracy for each model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co">#logistic M1 model:</span></span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M1_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary and accuracy for logistic M1 model:</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M1_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -777,16 +804,16 @@ AIC: 414.99
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>log_reg_model_1_train_acc <span class="ot">&lt;-</span> logistic_M1_fit<span class="sc">$</span>results<span class="sc">$</span>Accuracy</span>
-<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>log_reg_model_1_train_acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>log_reg_model_1_train_acc <span class="ot">&lt;-</span> logistic_M1_fit<span class="sc">$</span>results<span class="sc">$</span>Accuracy</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>log_reg_model_1_train_acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8292574</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>fitted_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newdata =</span> test_transformed_2, <span class="at">type=</span><span class="st">'raw'</span>)</span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M1 <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_M1, test_transformed_2<span class="sc">$</span>HeartDisease)</span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>fitted_M1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M1_fit,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>HeartDisease_factor), <span class="at">type=</span><span class="st">'raw'</span>)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M1 <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_M1, test_transformed_2<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -816,8 +843,8 @@ Prediction  0  1
        'Positive' Class : 0               
                                           </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">#logistic M2 model:</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M2_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary and accuracy for logistic M2 model:</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M2_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -846,16 +873,16 @@ AIC: 416.98
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>log_reg_model_2_train_acc <span class="ot">&lt;-</span> logistic_M2_fit<span class="sc">$</span>results<span class="sc">$</span>Accuracy</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>log_reg_model_2_train_acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>log_reg_model_2_train_acc <span class="ot">&lt;-</span> logistic_M2_fit<span class="sc">$</span>results<span class="sc">$</span>Accuracy</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>log_reg_model_2_train_acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8335269</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>fitted_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newdata =</span> test_transformed_2, <span class="at">type=</span><span class="st">'raw'</span>)</span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M2 <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_M2, test_transformed_2<span class="sc">$</span>HeartDisease)</span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>fitted_M2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M2_fit,</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>HeartDisease_factor), <span class="at">type=</span><span class="st">'raw'</span>)</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M2 <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_M2, test_transformed_2<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -885,8 +912,8 @@ Prediction  0  1
        'Positive' Class : 0               
                                           </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co">#logistic M3 model:</span></span>
-<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M3_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary and accuracy for logistic M3 model:</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(logistic_M3_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -918,16 +945,16 @@ AIC: 420.94
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>log_reg_model_3_train_acc <span class="ot">&lt;-</span> logistic_M3_fit<span class="sc">$</span>results<span class="sc">$</span>Accuracy</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>log_reg_model_3_train_acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>log_reg_model_3_train_acc <span class="ot">&lt;-</span> logistic_M3_fit<span class="sc">$</span>results<span class="sc">$</span>Accuracy</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>log_reg_model_3_train_acc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.8258345</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>fitted_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">newdata =</span> test_transformed_2, <span class="at">type=</span><span class="st">'raw'</span>)</span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M3 <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_M3, test_transformed_2<span class="sc">$</span>HeartDisease)</span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>fitted_M3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(logistic_M3_fit,</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">newdata =</span> test_transformed_2, <span class="at">type=</span><span class="st">'raw'</span>)</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M3 <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_M3, test_transformed_2<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>confusion_matrix_M3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
@@ -957,8 +984,8 @@ Prediction  0  1
        'Positive' Class : 0               
                                           </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">#list of accuracy obtained from each logistic model</span></span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">logistic_M1 =</span> confusion_matrix_M1<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M2 =</span> confusion_matrix_M2<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M3 =</span> confusion_matrix_M3<span class="sc">$</span>overall[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="co">#list of accuracy obtained from each logistic model</span></span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">logistic_M1 =</span> confusion_matrix_M1<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M2 =</span> confusion_matrix_M2<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M3 =</span> confusion_matrix_M3<span class="sc">$</span>overall[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$logistic_M1
  Accuracy 
@@ -978,9 +1005,348 @@ $logistic_M3
 </section>
 <section id="tree-models" class="level2">
 <h2 class="anchored" data-anchor-id="tree-models">Tree Models</h2>
+<section id="classification-tree-model" class="level3">
+<h3 class="anchored" data-anchor-id="classification-tree-model">Classification tree model</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>classification_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex,</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">data =</span> train_transformed_2,</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">method =</span> <span class="st">"rpart"</span>,</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">trControl =</span> trctrl,</span>
+<span id="cb80-7"><a href="#cb80-7" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">cp =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="at">by =</span> <span class="fl">0.001</span>)))</span>
+<span id="cb80-8"><a href="#cb80-8" aria-hidden="true" tabindex="-1"></a>classification_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CART 
+
+523 samples
+  6 predictor
+  2 classes: '0', '1' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold, repeated 3 times) 
+Summary of sample sizes: 471, 471, 471, 471, 471, 470, ... 
+Resampling results across tuning parameters:
+
+  cp     Accuracy   Kappa    
+  0.000  0.7960571  0.5921520
+  0.001  0.7966981  0.5933808
+  0.002  0.7979681  0.5958697
+  0.003  0.8030842  0.6056964
+  0.004  0.8062288  0.6117823
+  0.005  0.8075472  0.6142758
+  0.006  0.8062893  0.6116555
+  0.007  0.8037494  0.6063203
+  0.008  0.8037494  0.6062862
+  0.009  0.7955128  0.5899115
+  0.010  0.7955128  0.5899115
+  0.011  0.7955128  0.5899115
+  0.012  0.7955128  0.5899882
+  0.013  0.7955128  0.5899882
+  0.014  0.7942066  0.5862887
+  0.015  0.7922835  0.5823505
+  0.016  0.7916425  0.5808631
+  0.017  0.7910015  0.5795391
+  0.018  0.7852201  0.5679580
+  0.019  0.7852201  0.5679580
+  0.020  0.7820150  0.5618399
+  0.021  0.7820150  0.5618399
+  0.022  0.7820150  0.5618399
+  0.023  0.7813861  0.5606915
+  0.024  0.7813861  0.5606915
+  0.025  0.7877358  0.5735517
+  0.026  0.7877358  0.5735517
+  0.027  0.7928399  0.5841780
+  0.028  0.7928399  0.5841780
+  0.029  0.7928399  0.5841780
+  0.030  0.7928399  0.5841780
+  0.031  0.7928399  0.5841780
+  0.032  0.7960208  0.5909013
+  0.033  0.7960208  0.5909013
+  0.034  0.7960208  0.5909013
+  0.035  0.7960208  0.5909013
+  0.036  0.7921746  0.5828725
+  0.037  0.7921746  0.5828725
+  0.038  0.7921746  0.5828725
+  0.039  0.7921746  0.5828725
+  0.040  0.7889695  0.5762485
+  0.041  0.7889695  0.5762485
+  0.042  0.7889695  0.5762485
+  0.043  0.7889695  0.5762485
+  0.044  0.7889695  0.5762485
+  0.045  0.7838413  0.5656251
+  0.046  0.7838413  0.5656251
+  0.047  0.7838413  0.5656251
+  0.048  0.7838413  0.5656251
+  0.049  0.7781084  0.5537281
+  0.050  0.7781084  0.5537281
+  0.051  0.7781084  0.5537281
+  0.052  0.7781084  0.5537281
+  0.053  0.7781084  0.5537281
+  0.054  0.7692066  0.5351377
+  0.055  0.7692066  0.5351377
+  0.056  0.7692066  0.5351377
+  0.057  0.7692066  0.5351377
+  0.058  0.7672835  0.5310580
+  0.059  0.7672835  0.5310580
+  0.060  0.7672835  0.5310580
+  0.061  0.7672835  0.5310580
+  0.062  0.7672835  0.5310580
+  0.063  0.7685535  0.5332146
+  0.064  0.7685535  0.5332146
+  0.065  0.7685535  0.5332146
+  0.066  0.7685535  0.5332146
+  0.067  0.7729923  0.5417999
+  0.068  0.7729923  0.5417999
+  0.069  0.7729923  0.5417999
+  0.070  0.7729923  0.5417999
+  0.071  0.7729923  0.5417999
+  0.072  0.7742743  0.5443299
+  0.073  0.7742743  0.5443299
+  0.074  0.7742743  0.5443299
+  0.075  0.7742743  0.5443299
+  0.076  0.7761974  0.5480965
+  0.077  0.7761974  0.5480965
+  0.078  0.7761974  0.5480965
+  0.079  0.7761974  0.5480965
+  0.080  0.7761974  0.5480965
+  0.081  0.7761974  0.5480965
+  0.082  0.7761974  0.5480965
+  0.083  0.7761974  0.5480965
+  0.084  0.7761974  0.5480965
+  0.085  0.7761974  0.5480965
+  0.086  0.7761974  0.5480965
+  0.087  0.7761974  0.5480965
+  0.088  0.7761974  0.5480965
+  0.089  0.7761974  0.5480965
+  0.090  0.7761974  0.5480965
+  0.091  0.7761974  0.5480965
+  0.092  0.7761974  0.5480965
+  0.093  0.7761974  0.5480965
+  0.094  0.7761974  0.5480965
+  0.095  0.7761974  0.5480965
+  0.096  0.7761974  0.5480965
+  0.097  0.7761974  0.5480965
+  0.098  0.7761974  0.5480965
+  0.099  0.7761974  0.5480965
+  0.100  0.7761974  0.5480965
+
+Accuracy was used to select the optimal model using the largest value.
+The final value used for the model was cp = 0.005.</code></pre>
+</div>
+</div>
 </section>
-<section id="section" class="level2">
-<h2 class="anchored" data-anchor-id="section"></h2>
+<section id="random-forest-tree-model" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest-tree-model">Random forest tree model</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a>rf_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex,</span>
+<span id="cb82-4"><a href="#cb82-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> train_transformed_2,</span>
+<span id="cb82-5"><a href="#cb82-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">method =</span> <span class="st">"rf"</span>,</span>
+<span id="cb82-6"><a href="#cb82-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">trControl =</span> trctrl,</span>
+<span id="cb82-7"><a href="#cb82-7" aria-hidden="true" tabindex="-1"></a>                <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="dv">1</span><span class="sc">:</span>(<span class="fu">ncol</span>(data)<span class="sc">/</span><span class="dv">3</span>)))</span>
+<span id="cb82-8"><a href="#cb82-8" aria-hidden="true" tabindex="-1"></a>rf_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Random Forest 
+
+523 samples
+  6 predictor
+  2 classes: '0', '1' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold, repeated 3 times) 
+Summary of sample sizes: 471, 471, 471, 471, 471, 470, ... 
+Resampling results across tuning parameters:
+
+  mtry  Accuracy   Kappa    
+  1     0.8311200  0.6604809
+  2     0.8183358  0.6349310
+  3     0.8037252  0.6059693
+
+Accuracy was used to select the optimal model using the largest value.
+The final value used for the model was mtry = 1.</code></pre>
+</div>
+</div>
+</section>
+<section id="boosted-tree-model" class="level3">
+<h3 class="anchored" data-anchor-id="boosted-tree-model">Boosted tree model</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">11</span>)</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>boosted_fit <span class="ot">&lt;-</span> <span class="fu">train</span>(HeartDisease_factor <span class="sc">~</span> ExerciseAngina <span class="sc">+</span> ChestPainType <span class="sc">+</span> Oldpeak <span class="sc">+</span> Age <span class="sc">+</span> MaxHR <span class="sc">+</span> Sex,</span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">data =</span> train_transformed_2,</span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">method =</span> <span class="st">"gbm"</span>,</span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">trControl =</span> trctrl,</span>
+<span id="cb84-7"><a href="#cb84-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">n.trees =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>), <span class="co"># Number of trees (boosting iterations) in the GBM model</span></span>
+<span id="cb84-8"><a href="#cb84-8" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">interaction.depth =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="co"># Maximum depth of variable interactions in each tree</span></span>
+<span id="cb84-9"><a href="#cb84-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">shrinkage =</span> <span class="fl">0.1</span>, <span class="co"># Shrinkage parameter (learning rate) to control overfitting</span></span>
+<span id="cb84-10"><a href="#cb84-10" aria-hidden="true" tabindex="-1"></a>                                            <span class="at">n.minobsinnode =</span> <span class="dv">10</span>), <span class="co"># Minimum number of observations in each terminal node of a tree</span></span>
+<span id="cb84-11"><a href="#cb84-11" aria-hidden="true" tabindex="-1"></a>                     <span class="at">verbose =</span> <span class="cn">FALSE</span> ) <span class="co"># Control verbosity of the GBM model training</span></span>
+<span id="cb84-12"><a href="#cb84-12" aria-hidden="true" tabindex="-1"></a>boosted_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Stochastic Gradient Boosting 
+
+523 samples
+  6 predictor
+  2 classes: '0', '1' 
+
+No pre-processing
+Resampling: Cross-Validated (10 fold, repeated 3 times) 
+Summary of sample sizes: 471, 471, 471, 471, 471, 470, ... 
+Resampling results across tuning parameters:
+
+  interaction.depth  n.trees  Accuracy   Kappa    
+  1                   25      0.8030479  0.6041855
+  1                   50      0.8311321  0.6607735
+  1                  100      0.8335873  0.6659187
+  1                  200      0.8227504  0.6440799
+  2                   25      0.8234881  0.6452593
+  2                   50      0.8317973  0.6621605
+  2                  100      0.8259192  0.6503620
+  2                  200      0.8157475  0.6301770
+  3                   25      0.8266570  0.6517146
+  3                   50      0.8342284  0.6671217
+  3                  100      0.8240566  0.6468044
+  3                  200      0.8069303  0.6123680
+
+Tuning parameter 'shrinkage' was held constant at a value of 0.1
+
+Tuning parameter 'n.minobsinnode' was held constant at a value of 10
+Accuracy was used to select the optimal model using the largest value.
+The final values used for the model were n.trees = 50, interaction.depth =
+ 3, shrinkage = 0.1 and n.minobsinnode = 10.</code></pre>
+</div>
+</div>
+</section>
+<section id="models-comparison-1" class="level3">
+<h3 class="anchored" data-anchor-id="models-comparison-1">Models comparison</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary and accuracy for classification tree model:</span></span>
+<span id="cb86-2"><a href="#cb86-2" aria-hidden="true" tabindex="-1"></a>fitted_classification <span class="ot">&lt;-</span> <span class="fu">predict</span>(classification_fit,</span>
+<span id="cb86-3"><a href="#cb86-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>HeartDisease_factor),</span>
+<span id="cb86-4"><a href="#cb86-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">type=</span><span class="st">'raw'</span>)</span>
+<span id="cb86-5"><a href="#cb86-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb86-6"><a href="#cb86-6" aria-hidden="true" tabindex="-1"></a>confusion_matrix_classification <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_classification, test_transformed_2<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb86-7"><a href="#cb86-7" aria-hidden="true" tabindex="-1"></a>confusion_matrix_classification</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 97 33
+         1 20 73
+                                          
+               Accuracy : 0.7623          
+                 95% CI : (0.7009, 0.8166)
+    No Information Rate : 0.5247          
+    P-Value [Acc &gt; NIR] : 2.218e-13       
+                                          
+                  Kappa : 0.5207          
+                                          
+ Mcnemar's Test P-Value : 0.09929         
+                                          
+            Sensitivity : 0.8291          
+            Specificity : 0.6887          
+         Pos Pred Value : 0.7462          
+         Neg Pred Value : 0.7849          
+             Prevalence : 0.5247          
+         Detection Rate : 0.4350          
+   Detection Prevalence : 0.5830          
+      Balanced Accuracy : 0.7589          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary and accuracy for random forest tree model:</span></span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>fitted_rf <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_fit,</span>
+<span id="cb88-3"><a href="#cb88-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>HeartDisease_factor),</span>
+<span id="cb88-4"><a href="#cb88-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">type=</span><span class="st">'raw'</span>)</span>
+<span id="cb88-5"><a href="#cb88-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb88-6"><a href="#cb88-6" aria-hidden="true" tabindex="-1"></a>confusion_matrix_rf <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_rf, test_transformed_2<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb88-7"><a href="#cb88-7" aria-hidden="true" tabindex="-1"></a>confusion_matrix_rf</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction   0   1
+         0 101  29
+         1  16  77
+                                          
+               Accuracy : 0.7982          
+                 95% CI : (0.7395, 0.8488)
+    No Information Rate : 0.5247          
+    P-Value [Acc &gt; NIR] : &lt; 2e-16         
+                                          
+                  Kappa : 0.5931          
+                                          
+ Mcnemar's Test P-Value : 0.07364         
+                                          
+            Sensitivity : 0.8632          
+            Specificity : 0.7264          
+         Pos Pred Value : 0.7769          
+         Neg Pred Value : 0.8280          
+             Prevalence : 0.5247          
+         Detection Rate : 0.4529          
+   Detection Prevalence : 0.5830          
+      Balanced Accuracy : 0.7948          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co">#summary and accuracy for boosted tree model:</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>fitted_boosted <span class="ot">&lt;-</span> <span class="fu">predict</span>(boosted_fit,</span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">newdata =</span> <span class="fu">select</span>(test_transformed_2, <span class="sc">-</span>HeartDisease_factor),</span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">type=</span><span class="st">'raw'</span>)</span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a>confusion_matrix_boosted <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(fitted_boosted, test_transformed_2<span class="sc">$</span>HeartDisease_factor)</span>
+<span id="cb90-7"><a href="#cb90-7" aria-hidden="true" tabindex="-1"></a>confusion_matrix_boosted</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction   0   1
+         0 100  26
+         1  17  80
+                                          
+               Accuracy : 0.8072          
+                 95% CI : (0.7492, 0.8568)
+    No Information Rate : 0.5247          
+    P-Value [Acc &gt; NIR] : &lt;2e-16          
+                                          
+                  Kappa : 0.6119          
+                                          
+ Mcnemar's Test P-Value : 0.2225          
+                                          
+            Sensitivity : 0.8547          
+            Specificity : 0.7547          
+         Pos Pred Value : 0.7937          
+         Neg Pred Value : 0.8247          
+             Prevalence : 0.5247          
+         Detection Rate : 0.4484          
+   Detection Prevalence : 0.5650          
+      Balanced Accuracy : 0.8047          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="do">##list of accuracy obtained from each tree model</span></span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">tree_classification =</span> confusion_matrix_classification<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_rf =</span> confusion_matrix_rf<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_boosted =</span> confusion_matrix_boosted<span class="sc">$</span>overall[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$tree_classification
+ Accuracy 
+0.7623318 
+
+$tree_rf
+ Accuracy 
+0.7982063 
+
+$tree_boosted
+ Accuracy 
+0.8071749 </code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="wrap-up" class="level2">
 <h2 class="anchored" data-anchor-id="wrap-up">Wrap up</h2>

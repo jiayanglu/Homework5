@@ -38,6 +38,9 @@ editor_options:
 library(tidyverse)
 library(caret)
 library(corrplot)
+library(rpart)
+library(randomForest)
+library(gbm)
 
 #read in csv data
 data <- read_csv('heart.csv')
@@ -63,34 +66,53 @@ data <- data |>
 data
 ```
 
-2.  Create a new variable that is a factor version of the HeartDisease variable (if needed, this depends on how you read in your data). Remove the ST_Slope variable and the original HeartDisease variable (if applicable).
+More EDA is conducted on this data set. I create new dummy variables for HeartDisease, and calculate and plot correlation between HeartDisease_character1 and other variables.
+
+```{r}
+#change variable HeartDisease to be a character variable for creating dummy variable purpose
+data$HeartDisease_character <- as.character(data$HeartDisease)
+str(data)
+
+#create new dummy variables via dummyVars() and predict() 
+categorical_vars <- c("Sex", "ChestPainType", "RestingECG", "ExerciseAngina", "HeartDisease_character")
+dummy_model <- dummyVars(~ ., data = data[, categorical_vars])
+data_dummies <- predict(dummy_model, newdata = data)
+#add these columns to our data frame
+data_2 <- cbind(data_dummies, data[, !names(data) %in% categorical_vars])
+str(data_2)
+
+m <- cor(select(data_2, -c("HeartDisease_character0", "SexF", "RestingECGNormal", "ExerciseAnginaN", "HeartDisease", "ST_Slope")))
+
+corrplot(m, method = 'color',
+         order = 'alphabet',
+         diag = FALSE,
+         col = COL2('RdBu'),
+         tl.cex = 0.7)
+```
+
+From the graph above it, we can see that there are some positive linear correlation between HeartDisease_character1 and ExerciseAnginaY, ChestPainTypeASY, Oldpeak, Age, or SexM, and some negative linear correlation between HeartDisease1 and MaxHR, ChestPainTypeATA, or ChestPainTypeNAP. There are also some weak relationships between HeartDisease_character1 and RestingBP or FastingBS. It seems that Cholesterol, RestingECGLVH, and RestingECGST don't have strong correlations with HeartDisease_character1. Additionally, there is also some negative correlation between Age and MaxHR, and some positive correlation between ExerciseAnginaY and ChestPainTypeASY.
+
+2.  Create a new variable that is a factor version of the HeartDisease variable. Remove the ST_Slope variable, the original HeartDisease variable, and the HeartDisease_character variable.
 
 ```{r}
 data <- data |>
-  select(everything(), -ST_Slope)
-data
-
-data_2 <- data
-data_2$HeartDisease <- as.factor(data_2$HeartDisease)
+  mutate(HeartDisease_factor = as.factor(HeartDisease)) |>
+  select(everything(), -ST_Slope, -HeartDisease_character, -HeartDisease)
+str(data)
 ```
 
 3. Create dummy columns corresponding to the values of these three variables for use in our kNN fit. The caret vignette has a function to help us out here. You should use dummyVars() and predict() to create new columns. Then add these columns to our data frame.
 
-```{r}
-#check categorical variables left in the data set
-str(data_2)
-```
-
-From the output, we have some categorical predictors still in our data set: Sex, ChestPainType, RestingECG, and ExerciseAngina. 
+From the output after using str(), we have some categorical predictors still in our data set: Sex, ChestPainType, RestingECG, and ExerciseAngina. 
 
 ```{r}
 #specify all categorical variables left in data
-categorical_vars <- c("Sex", "ChestPainType", "RestingECG", "ExerciseAngina")
+categorical_vars_2 <- c("Sex", "ChestPainType", "RestingECG", "ExerciseAngina")
 #create new columns for dummy variables via dummyVars() and predict() 
-dummy_model <- dummyVars(~ ., data = data_2[, categorical_vars])
-data_dummies <- predict(dummy_model, newdata = data_2)
+dummy_model_2 <- dummyVars(~ ., data = data[, categorical_vars_2])
+data_dummies_2 <- predict(dummy_model_2, newdata = data)
 #add these columns to our data frame
-data_knn <- cbind(data_dummies, data_2[, !names(data_2) %in% categorical_vars])
+data_knn <- cbind(data_dummies_2, data[, !names(data) %in% categorical_vars_2])
 
 str(data_knn)
 ```
@@ -102,7 +124,7 @@ Split this data into a training and test set.
 ```{r}
 set.seed(11)
 
-trainIndex <- createDataPartition(data_knn$HeartDisease, p = .7,
+trainIndex <- createDataPartition(data_knn$HeartDisease_factor, p = .7,
                                   list = FALSE,
                                   times = 1)
 
@@ -142,7 +164,9 @@ For training knn classifier, train() method should be passed with “method” p
 trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 3)
 
 set.seed(11)
-knn_fit <- train(HeartDisease ~ ., data = train_transformed, method = "knn",
+knn_fit <- train(HeartDisease_factor ~ ., 
+                 data = train_transformed, 
+                 method = "knn",
                  trControl=trctrl,
                  tuneGrid = expand.grid(k = 1:40),
                  tuneLength = 10)
@@ -154,14 +178,13 @@ The output shows Accuracy and Kappa metrics for different k value and it automat
 Now, our model is trained with K value as 16 We are ready to predict HeartDisease for our test set. We can use predict() method.
 
 ```{r}
-test_pred <- predict(knn_fit, newdata = test_transformed)
-test_pred
+test_pred <- predict(knn_fit, newdata = select(test_transformed, -HeartDisease_factor))
 ```
 
 To check how well this chosen model does on the test set, we can use the confusionMatrix() function.
 
 ```{r}
-confusion_matrix_knn <- confusionMatrix(test_pred, test_transformed$HeartDisease)
+confusion_matrix_knn <- confusionMatrix(test_pred, test_transformed$HeartDisease_factor)
 confusion_matrix_knn
 ```
 
@@ -171,48 +194,22 @@ It shows that our model accuracy for test set is 76.23%.
 
 ### Logistic regression Model 1
 
-More EDA is conducted on this data set. I create new dummy variables HeartDisease, and calculate and plot correlation between HeartDisease1 and other variables.
-
-```{r}
-#change variable HeartDisease to be a character variable for creating dummy variable purpose
-data_3 <- data
-data_3$HeartDisease <- as.character(data_3$HeartDisease)
-str(data_3)
-
-#create new dummy variables via dummyVars() and predict() 
-categorical_vars_2 <- c("Sex", "ChestPainType", "RestingECG", "ExerciseAngina", "HeartDisease")
-dummy_model_2 <- dummyVars(~ ., data = data_3[, categorical_vars_2])
-data_dummies_2 <- predict(dummy_model_2, newdata = data_3)
-#add these columns to our data frame
-data_3 <- cbind(data_dummies_2, data_3[, !names(data_3) %in% categorical_vars_2])
-str(data_3)
-
-m <- cor(select(data_3, -c("HeartDisease0", "SexF", "RestingECGNormal", "ExerciseAnginaN")))
-
-corrplot(m, method = 'color',
-         order = 'alphabet',
-         diag = FALSE,
-         col = COL2('RdBu'))
-```
-
-From the graph above it, we can see that there are some positive linear correlation between HeartDisease1 and ExerciseAnginaY, ChestPainTypeASY, Oldpeak, Age, or SexM, and some negative linear correlation between HeartDisease1 and MaxHR, ChestPainTypeATA, or ChestPainTypeNAP. There are also some weak relationships between HeartDisease1 and RestingBP or FastingBS. It seems that Cholesterol, RestingECGLVH, and RestingECGST don't have strong correlations with HeartDisease1. Additionally, there is also some negative correlation between Age and MaxHR, and positive correlation between ExerciseAnginaY and ChestPainTypeASY.
-
-To create logistic regression models, we don't need to create the dummy variables. Thus, we can use the previous data set "data_2" in the training process.
+To create logistic regression models, we don't need to create the dummy variables. Thus, we can use the previous data set "data" in the training process.
 
 Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.
 
 ```{r}
-str(data_2)
+str(data)
 
 set.seed(11)
 
 #split this data into a training and test set
-trainIndex_2 <- createDataPartition(data_2$HeartDisease, p = .7,
-                                  list = FALSE,
-                                  times = 1)
+trainIndex_2 <- createDataPartition(data$HeartDisease_factor, p = .7,
+                                    list = FALSE,
+                                    times = 1)
 
-train_data_2 <-  data_2[trainIndex_2, ]
-test_data_2 <- data_2[-trainIndex_2, ]
+train_data_2 <-  data[trainIndex_2, ]
+test_data_2 <- data[-trainIndex_2, ]
 #check the dimensions of our training data and testing data frame
 dim(train_data_2)
 dim(test_data_2)
@@ -224,7 +221,7 @@ pre_proc_values_2 <- preProcess(train_data_2, method = c("center", "scale"))
 train_transformed_2 <- predict(pre_proc_values_2, train_data_2)
 test_transformed_2 <- predict(pre_proc_values_2, test_data_2)
 
-logistic_M1_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex, 
+logistic_M1_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex, 
                          data = train_transformed_2, 
                          method = "glm",
                          family="binomial",
@@ -238,7 +235,7 @@ Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex,
 
 ```{r}
 set.seed(11)
-logistic_M2_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR, 
+logistic_M2_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR, 
                          data = train_transformed_2, 
                          method = "glm",
                          family="binomial",
@@ -247,12 +244,11 @@ logistic_M2_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak
 logistic_M2_fit
 ```
 
-
 ### Logistic regression Model 3
 
 ```{r}
 set.seed(11)
-logistic_M3_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR + ExerciseAngina:ChestPainType, 
+logistic_M3_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR + ExerciseAngina:ChestPainType, 
                          data = train_transformed_2, 
                          method = "glm",
                          family="binomial",
@@ -261,45 +257,45 @@ logistic_M3_fit <- train(HeartDisease ~ ExerciseAngina + ChestPainType + Oldpeak
 logistic_M3_fit
 ```
 
-### Models Comparison
+### Models comparison
 
-Provide basic summary and obtained train accuracy for each model:
+Obtain basic summary and train accuracy for each model:
 
 ```{r}
-#logistic M1 model:
+#summary and accuracy for logistic M1 model:
 summary(logistic_M1_fit)
 
 log_reg_model_1_train_acc <- logistic_M1_fit$results$Accuracy
 log_reg_model_1_train_acc
 
 fitted_M1 <- predict(logistic_M1_fit,
-                  newdata = test_transformed_2, type='raw')
+                     newdata = select(test_transformed_2, -HeartDisease_factor), type='raw')
 
-confusion_matrix_M1 <- confusionMatrix(fitted_M1, test_transformed_2$HeartDisease)
+confusion_matrix_M1 <- confusionMatrix(fitted_M1, test_transformed_2$HeartDisease_factor)
 confusion_matrix_M1
 
-#logistic M2 model:
+#summary and accuracy for logistic M2 model:
 summary(logistic_M2_fit)
 
 log_reg_model_2_train_acc <- logistic_M2_fit$results$Accuracy
 log_reg_model_2_train_acc
 
 fitted_M2 <- predict(logistic_M2_fit,
-                  newdata = test_transformed_2, type='raw')
+                     newdata = select(test_transformed_2, -HeartDisease_factor), type='raw')
 
-confusion_matrix_M2 <- confusionMatrix(fitted_M2, test_transformed_2$HeartDisease)
+confusion_matrix_M2 <- confusionMatrix(fitted_M2, test_transformed_2$HeartDisease_factor)
 confusion_matrix_M2
 
-#logistic M3 model:
+#summary and accuracy for logistic M3 model:
 summary(logistic_M3_fit)
 
 log_reg_model_3_train_acc <- logistic_M3_fit$results$Accuracy
 log_reg_model_3_train_acc
 
 fitted_M3 <- predict(logistic_M3_fit,
-                  newdata = test_transformed_2, type='raw')
+                     newdata = test_transformed_2, type='raw')
 
-confusion_matrix_M3 <- confusionMatrix(fitted_M3, test_transformed_2$HeartDisease)
+confusion_matrix_M3 <- confusionMatrix(fitted_M3, test_transformed_2$HeartDisease_factor)
 confusion_matrix_M3
 
 #list of accuracy obtained from each logistic model
@@ -310,9 +306,78 @@ From the result after using confusionMatrix(), we can see the the logistic regre
 
 ## Tree Models
 
-##
-```{r}
+### Classification tree model
 
+```{r}
+set.seed(11)
+
+classification_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex,
+                            data = train_transformed_2,
+                            method = "rpart",
+                            trControl = trctrl,
+                            tuneGrid = expand.grid(cp = seq(0, 0.1, by = 0.001)))
+classification_fit
+```
+
+### Random forest tree model
+
+```{r}
+set.seed(11)
+
+rf_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex,
+                data = train_transformed_2,
+                method = "rf",
+                trControl = trctrl,
+                tuneGrid = expand.grid(mtry = 1:(ncol(data)/3)))
+rf_fit
+```
+
+### Boosted tree model
+
+```{r}
+set.seed(11)
+
+boosted_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex,
+                     data = train_transformed_2,
+                     method = "gbm",
+                     trControl = trctrl,
+                     tuneGrid = expand.grid(n.trees = c(25, 50, 100, 200), # Number of trees (boosting iterations) in the GBM model
+                                            interaction.depth = c(1, 2, 3), # Maximum depth of variable interactions in each tree
+                                            shrinkage = 0.1, # Shrinkage parameter (learning rate) to control overfitting
+                                            n.minobsinnode = 10), # Minimum number of observations in each terminal node of a tree
+                     verbose = FALSE ) # Control verbosity of the GBM model training
+boosted_fit
+```
+
+### Models comparison
+
+```{r}
+#summary and accuracy for classification tree model:
+fitted_classification <- predict(classification_fit,
+                                 newdata = select(test_transformed_2, -HeartDisease_factor),
+                                 type='raw')
+
+confusion_matrix_classification <- confusionMatrix(fitted_classification, test_transformed_2$HeartDisease_factor)
+confusion_matrix_classification
+
+#summary and accuracy for random forest tree model:
+fitted_rf <- predict(rf_fit,
+                     newdata = select(test_transformed_2, -HeartDisease_factor),
+                     type='raw')
+
+confusion_matrix_rf <- confusionMatrix(fitted_rf, test_transformed_2$HeartDisease_factor)
+confusion_matrix_rf
+
+#summary and accuracy for boosted tree model:
+fitted_boosted <- predict(boosted_fit,
+                          newdata = select(test_transformed_2, -HeartDisease_factor),
+                          type='raw')
+
+confusion_matrix_boosted <- confusionMatrix(fitted_boosted, test_transformed_2$HeartDisease_factor)
+confusion_matrix_boosted
+
+##list of accuracy obtained from each tree model
+list(tree_classification = confusion_matrix_classification$overall[1], tree_rf = confusion_matrix_rf$overall[1], tree_boosted = confusion_matrix_boosted$overall[1])
 ```
 
 ## Wrap up
