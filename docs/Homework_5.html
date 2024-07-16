@@ -139,13 +139,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>What is the purpose of using cross-validation when fitting a random forest model?</li>
 </ol>
 <ul>
-<li>The purpose of using cross-validation when fitting a random forest model is to select optimal tuning parameter.</li>
+<li>The purpose of using cross-validation when fitting a random forest model is to help in evaluating performance more accurately, to select optimal tuning parameter, to protect from overfitting, and to get more robust performance metrics.</li>
 </ul>
 <ol start="2" type="1">
 <li>Describe the bagged tree algorithm.</li>
 </ol>
 <ul>
-<li>Bagged tree algorithm uses bagging (or bootstrap aggregation) method to repeatedly get boostrap samples from the data (non-parametric) or a fitted model (parametric) and then calculate bootstrap statistics to obtain standard errors or statistical quantities to construct confidence intervals.</li>
+<li>The bagged tree algorithm utilizes the bagging (bootstrap aggregation) method, which involves repeatedly drawing bootstrap samples from either the dataset (non-parametric approach) or a fitted model (parametric approach). For each bootstrap sample, a decision tree is trained independently. After training, predictions from individual trees are aggregated. This ensemble approach reduces variance and enhances model robustness, leading to improved predictive performance compared to a single decision tree.</li>
 </ul>
 <ol start="3" type="1">
 <li>What is meant by a general linear model?</li>
@@ -157,22 +157,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>When fitting a multiple linear regression model, what does adding an interaction term do? That is, what does it allow the model to do differently as compared to when it is not included in the model?</li>
 </ol>
 <ul>
-<li>Fitting a multiple linear regression model including an interaction term would accommodate non-additive relationships to represent more complexity among variables which can lead to more accurate predictions compared to not including in the model.</li>
+<li>Fitting a multiple linear regression model that includes an interaction term allows the model to capture non-additive relationships among variables. This accommodates more complexity in the relationship between predictors and the response variable, potentially leading to more accurate predictions compared to a model without interaction terms.</li>
 </ul>
 <ol start="5" type="1">
 <li>Why do we split our data into a training and test set?</li>
 </ol>
 <ul>
-<li>Splitting our data into a training and test set is great to avoid overfitting when evaluating the model on the same data it was trained on, and to provide a more robust estimation of model performance. Overall, it ensures the reliability and applicability of the model.</li>
+<li>Splitting data into training and test sets ensures that machine learning models are evaluated on unseen data, preventing overfitting and providing a realistic measure of their predictive performance. It also allows for effective hyperparameter tuning and ensures the model’s reliability for real-world applications.</li>
 </ul>
 </section>
 <section id="task-2-fitting-models" class="level1">
 <h1>Task 2: Fitting Models</h1>
-<section id="quick-edadata-preparation" class="level2">
-<h2 class="anchored" data-anchor-id="quick-edadata-preparation">Quick EDA/Data Preparation</h2>
-<ol type="1">
-<li>Quickly understand data: Check on missingness and summarize the data, especially with respect to the relationships of the variables to HeartDisease.</li>
-</ol>
+<p>Loading the packages required for the analyses in this document.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -240,6 +236,13 @@ The following object is masked from 'package:ggplot2':
 <pre><code>Loaded gbm 2.2.2
 This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3</code></pre>
 </div>
+</div>
+<section id="quick-edadata-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="quick-edadata-preparation">Quick EDA/Data Preparation</h2>
+<ol type="1">
+<li>Quickly understand data: Check on missingness and summarize the data, especially with respect to the relationships of the variables to HeartDisease.</li>
+</ol>
+<div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#read in csv data</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'heart.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -379,7 +382,7 @@ dbl (7): Age, RestingBP, Cholesterol, FastingBS, MaxHR, Oldpeak, HeartDisease
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Homework_5_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="Homework_5_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>

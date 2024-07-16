@@ -10,11 +10,11 @@ editor_options:
 
 1.  What is the purpose of using cross-validation when fitting a random forest model?
 
--   The purpose of using cross-validation when fitting a random forest model is to select optimal tuning parameter.
+-   The purpose of using cross-validation when fitting a random forest model is to help in evaluating performance more accurately, to select optimal tuning parameter, to protect from overfitting, and to get more robust performance metrics.
 
 2.  Describe the bagged tree algorithm.
 
--   Bagged tree algorithm uses bagging (or bootstrap aggregation) method to repeatedly get boostrap samples from the data (non-parametric) or a fitted model (parametric) and then calculate bootstrap statistics to obtain standard errors or statistical quantities to construct confidence intervals.
+-   The bagged tree algorithm utilizes the bagging (bootstrap aggregation) method, which involves repeatedly drawing bootstrap samples from either the dataset (non-parametric approach) or a fitted model (parametric approach). For each bootstrap sample, a decision tree is trained independently. After training, predictions from individual trees are aggregated. This ensemble approach reduces variance and enhances model robustness, leading to improved predictive performance compared to a single decision tree.
 
 3.  What is meant by a general linear model?
 
@@ -22,17 +22,15 @@ editor_options:
 
 4.  When fitting a multiple linear regression model, what does adding an interaction term do? That is, what does it allow the model to do differently as compared to when it is not included in the model?
 
--   Fitting a multiple linear regression model including an interaction term would accommodate non-additive relationships to represent more complexity among variables which can lead to more accurate predictions compared to not including in the model.
+-   Fitting a multiple linear regression model that includes an interaction term allows the model to capture non-additive relationships among variables. This accommodates more complexity in the relationship between predictors and the response variable, potentially leading to more accurate predictions compared to a model without interaction terms.
 
 5.  Why do we split our data into a training and test set?
 
--   Splitting our data into a training and test set is great to avoid overfitting when evaluating the model on the same data it was trained on, and to provide a more robust estimation of model performance. Overall, it ensures the reliability and applicability of the model.
+-   Splitting data into training and test sets ensures that machine learning models are evaluated on unseen data, preventing overfitting and providing a realistic measure of their predictive performance. It also allows for effective hyperparameter tuning and ensures the model's reliability for real-world applications.
 
 # Task 2: Fitting Models
 
-## Quick EDA/Data Preparation
-
-1.  Quickly understand data: Check on missingness and summarize the data, especially with respect to the relationships of the variables to HeartDisease.
+Loading the packages required for the analyses in this document.
 
 ```{r}
 library(tidyverse)
@@ -41,7 +39,13 @@ library(corrplot)
 library(rpart)
 library(randomForest)
 library(gbm)
+```
 
+## Quick EDA/Data Preparation
+
+1.  Quickly understand data: Check on missingness and summarize the data, especially with respect to the relationships of the variables to HeartDisease.
+
+```{r}
 #read in csv data
 data <- read_csv('heart.csv')
 
