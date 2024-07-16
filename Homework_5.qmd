@@ -6,6 +6,10 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
 # Task 1: Conceptual Questions
 
 1.  What is the purpose of using cross-validation when fitting a random forest model?
@@ -95,6 +99,12 @@ corrplot(m, method = 'color',
 ```
 
 From the graph above it, we can see that there are some positive linear correlation between HeartDisease_character1 and ExerciseAnginaY, ChestPainTypeASY, Oldpeak, Age, or SexM, and some negative linear correlation between HeartDisease1 and MaxHR, ChestPainTypeATA, or ChestPainTypeNAP. There are also some weak relationships between HeartDisease_character1 and RestingBP or FastingBS. It seems that Cholesterol, RestingECGLVH, and RestingECGST don't have strong correlations with HeartDisease_character1. Additionally, there is also some negative correlation between Age and MaxHR, and some positive correlation between ExerciseAnginaY and ChestPainTypeASY.
+
+Similar result is obtained using GGally::ggpairs().
+
+```{r}
+GGally::ggpairs(data)
+```
 
 2.  Create a new variable that is a factor version of the HeartDisease variable. Remove the ST_Slope variable, the original HeartDisease variable, and the HeartDisease_character variable.
 
