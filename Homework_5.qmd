@@ -246,6 +246,8 @@ logistic_M2_fit
 
 ### Logistic regression Model 3
 
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex, the interaction term between Age and MaxHR, and between ExerciseAngina and ChestPainType as predictors.
+
 ```{r}
 set.seed(11)
 logistic_M3_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex + Age:MaxHR + ExerciseAngina:ChestPainType, 
@@ -306,7 +308,13 @@ From the result after using confusionMatrix(), we can see the the logistic regre
 
 ## Tree Models
 
+To create tree models, we don't need to create the dummy variables. Thus, we can use the previous data set "data" in the training process.
+
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.
+
 ### Classification tree model
+
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.
 
 ```{r}
 set.seed(11)
@@ -321,6 +329,8 @@ classification_fit
 
 ### Random forest tree model
 
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.
+
 ```{r}
 set.seed(11)
 
@@ -333,6 +343,8 @@ rf_fit
 ```
 
 ### Boosted tree model
+
+Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex as predictors.
 
 ```{r}
 set.seed(11)
@@ -350,6 +362,8 @@ boosted_fit
 ```
 
 ### Models comparison
+
+Obtain basic summary and train accuracy for each model:
 
 ```{r}
 #summary and accuracy for classification tree model:
@@ -383,5 +397,7 @@ list(tree_classification = confusion_matrix_classification$overall[1], tree_rf =
 ## Wrap up
 
 ```{r}
+list(logistic_M1 = confusion_matrix_M1$overall[1], logistic_M2 = confusion_matrix_M2$overall[1], logistic_M3 = confusion_matrix_M3$overall[1], tree_classification = confusion_matrix_classification$overall[1], tree_rf = confusion_matrix_rf$overall[1], tree_boosted = confusion_matrix_boosted$overall[1])
+
 
 ```
