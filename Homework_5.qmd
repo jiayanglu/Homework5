@@ -363,15 +363,17 @@ Fitting a model with ExerciseAngina, ChestPainType, Oldpeak, Age, MaxHR and Sex 
 ```{r}
 set.seed(11)
 
+#here, "n.trees" defines numbers of trees; "interaction.depth" defines maximum depth of variable interactions in each tree; "shrinkage" defines shrinkage parameter to control overfitting; "n.minobsinnode" defines minimum number of observations in each terminal node of a tree; "verbose" controls verbosity.
+
 boosted_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak + Age + MaxHR + Sex,
                      data = train_transformed_2,
                      method = "gbm",
                      trControl = trctrl,
-                     tuneGrid = expand.grid(n.trees = c(25, 50, 100, 200), # Number of trees (boosting iterations) in the GBM model
-                                            interaction.depth = c(1, 2, 3), # Maximum depth of variable interactions in each tree
-                                            shrinkage = 0.1, # Shrinkage parameter (learning rate) to control overfitting
-                                            n.minobsinnode = 10), # Minimum number of observations in each terminal node of a tree
-                     verbose = FALSE ) # Control verbosity of the GBM model training
+                     tuneGrid = expand.grid(n.trees = c(25, 50, 100, 200), 
+                                            interaction.depth = c(1, 2, 3), 
+                                            shrinkage = 0.1, 
+                                            n.minobsinnode = 10), 
+                     verbose = FALSE ) 
 boosted_fit
 ```
 
