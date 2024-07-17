@@ -1291,11 +1291,15 @@ $tree_boosted
 </section>
 <section id="wrap-up" class="level2">
 <h2 class="anchored" data-anchor-id="wrap-up">Wrap up</h2>
-<p>Show accuracy for all the regression models and tree models in a list:</p>
+<p>Show accuracy for all the models in a list:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">logistic_M1 =</span> confusion_matrix_M1<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M2 =</span> confusion_matrix_M2<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M3 =</span> confusion_matrix_M3<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_classification =</span> confusion_matrix_classification<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_rf =</span> confusion_matrix_rf<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_boosted =</span> confusion_matrix_boosted<span class="sc">$</span>overall[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">list</span>(<span class="at">knn =</span> confusion_matrix_knn<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M1 =</span> confusion_matrix_M1<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M2 =</span> confusion_matrix_M2<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">logistic_M3 =</span> confusion_matrix_M3<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_classification =</span> confusion_matrix_classification<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_rf =</span> confusion_matrix_rf<span class="sc">$</span>overall[<span class="dv">1</span>], <span class="at">tree_boosted =</span> confusion_matrix_boosted<span class="sc">$</span>overall[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>$logistic_M1
+<pre><code>$knn
+ Accuracy 
+0.7623318 
+
+$logistic_M1
  Accuracy 
 0.7847534 
 
