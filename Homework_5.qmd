@@ -352,7 +352,7 @@ rf_fit <- train(HeartDisease_factor ~ ExerciseAngina + ChestPainType + Oldpeak +
                 data = train_transformed_2,
                 method = "rf",
                 trControl = trctrl,
-                tuneGrid = expand.grid(mtry = 1:(ncol(data)/3)))
+                tuneGrid = expand.grid(mtry = 1:sqrt(ncol(data)-1)))
 rf_fit
 ```
 
